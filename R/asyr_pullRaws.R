@@ -1,0 +1,40 @@
+# pulls entire dataframe of RawVariables
+pull_raws<-function(xml,TickTable){
+  vars<-c(
+    "LedOffReferenceValues",
+    "LedOnReferenceValues",
+    "LedOnEmissionValues",
+    "LedOffEmissionValues"
+  )
+  replace_names<-function(str,Analyte){
+    replacements<-paste0(Analyte,
+                         "_",
+                         c("DarkRef","LightRef",
+                           "LightEmission","DarkEmission")
+    )
+    q<-setNames(
+      c("Tick","Well",replacements),
+      c("Tick","Well",vars)
+    )[str]
+    unname(q)
+  }
+  merge_raw<-function(x,y){
+    merge(x,y,by=c("Tick","Well"))
+  }
+
+  grab_raw_analyte<-function(Xml=xml,vars=vars,Analyte){
+    a<-lapply(vars,get_raw_var,xml=Xml,analyte=Analyte)
+    A<-Reduce('merge_raw',a)
+    setNames(A,replace_names(names(A),Analyte))
+  }
+  OUT<-merge_raw(
+    grab_raw_analyte(xml,vars,Analyte='pH'),
+    grab_raw_analyte(xml,vars,Analyte='O2')
+  )
+  OUT<-OUT[order(OUT$Tick,OUT$Well),]
+  if(min(OUT$Tick)==1 && min(TickTable$Tick)==0){
+  OUT$Tick<-OUT$Tick-1
+  }
+  row.names(OUT)<-NULL
+  OUT
+}

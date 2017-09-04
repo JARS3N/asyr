@@ -1,0 +1,1 @@
+getInst<-function(Z){xpathSApply(Z,"//InstrumentSerialNumber",xmlValue)}

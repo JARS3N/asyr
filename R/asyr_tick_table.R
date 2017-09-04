@@ -1,0 +1,9 @@
+tick_table<-function(u){
+  start=xpathSApply(u,"//AssayDataSet//RateSpans//StartTickIndex",xmlValue)
+  end=xpathSApply(u,"//AssayDataSet//RateSpans//EndTickIndex",xmlValue)
+  Measure=seq_along(start)
+  df<-Map(function(x,y,z){
+    data.frame(Tick=seq(from=x,to=y,by=1),Measure=z)
+  },x=start,y=end,z=seq_along(start))
+  do.call('rbind',df)
+}
