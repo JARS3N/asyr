@@ -1,0 +1,19 @@
+extract_wetQC<-function(E){
+if(E$assay=='ksv'){
+  E$ksv[c('Gain','sorpH')]<-NA
+}
+if(E$assay=='gain'){
+    E$gain[c('KSV','F0','Ambient')]<-NA
+}
+E[[E$assay]][c('pH.LED','pH.CalEmission',"pH.IntialReferenceDelta",
+"pH.Status","O2.LED","O2.CalEmission","O2.IntialReferenceDelta","O2.Status")  
+]<-NULL
+OUT<-merge(E$CAL,E[[E$assay]],by='Well')
+OUT[c("Lot","sn","Inst")]<-list(E$Lot,E$sn,E$Inst)
+OUT[c(
+  "Well","sorpH",
+  "O2.LED","O2.CalEmission","O2.Status",
+  "pH.LED","pH.CalEmission","pH.Status",
+  "Gain","Ambient","F0","KSV","Inst","sn","Lot")
+]
+}
