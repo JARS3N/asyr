@@ -46,10 +46,10 @@
 #   y
 # })
 #
-library(XML)
-library(asyr)
-fls<-list.files('sampledata',full.names =T,pattern='asyr')
-Y0<-lapply(fls,XML::xmlTreeParse,useInternalNodes=T)
+#library(XML)
+#library(asyr)
+#fls<-list.files('sampledata',full.names =T,pattern='asyr')
+#Y0<-lapply(fls,XML::xmlTreeParse,useInternalNodes=T)
 
 
 
