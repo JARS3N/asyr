@@ -57,7 +57,7 @@ asyr_createRmd<-function (pHFluor, MFBatch, Directory) {
     if(.){DATA<<- "data.feather"}else{DATA<<- "data.csv"}
   fp<-shQuote(file.path(Directory, DATA))
   imp<-paste('rio::import(',fp,')')
-  readLines(system.file("rmd/pKaTemplate.Rmd", package = "PipeFish")) %>%
+  readLines(system.file("rmd/pKaTemplate.Rmd", package = "shinyStar")) %>%
     gsub("XBATCHX", MFBatch, .) %>%
     gsub("XLOTX", pHFluor, .) %>%
     gsub("rio::import('data.csv')",imp ,.)
