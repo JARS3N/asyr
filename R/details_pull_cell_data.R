@@ -1,7 +1,7 @@
 pull_cell_data<-function(cell){
   cell<-cell[-which(names(cell)=='br')]
   b<-which(names(cell)=='b')
-  print(b)
+ # print(b)
   cell[(b[1]+1):(b[2]-2)]<-paste0("optical_",cell[(b[1]+ 1):(b[2]-2)] )
   cell[(b[2]+1):(b[3]-1)]<-gsub("center","spot_center",cell[(b[2]+1):(b[3]-1)])
   split_name_str<-function(str){
