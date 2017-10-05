@@ -67,7 +67,8 @@ asyr_createRmd<-function (pHFluor, MFBatch, Directory) {
 asyr_pKa<-function(pHFluor,MFBatch,Platform,Directory){
   FileOut<-file.path(Directory,paste0(pHFluor,"pKa.Rmd"))
   list.files(path=Directory,pattern='asyr',full.names = TRUE)   %>%
-    lapply( .,PipeFish::intermediateStep) %>%
+    lapply(.,XML::xmlTreeParse,useInternalNodes=T)  %>%
+    lapply( .,process) %>%
     lapply(.,asyr_mungelist[[as.numeric(Platform)]]) %>%
     dplyr::bind_rows() %>%
     write.csv(x=.,file=file.path(Directory,"data.csv"),row.names=F)
