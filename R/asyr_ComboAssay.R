@@ -26,7 +26,7 @@ kcalc<-lapply(split(O2df,O2df$Measure),
             })
 
 ksv<- merge(kcalc$Ambient,kcalc$F0,by='Well')
-ksv$ksv<-((ksv$F0/ksv$Ambient)-1)/152
+ksv$KSV<-((ksv$F0/ksv$Ambient)-1)/152
 
 
 combo<-merge(pHdf,ksv,by='Well')
