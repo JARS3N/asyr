@@ -1,4 +1,4 @@
-processed_summary <- function(lst) {
+process_summary <- function(lst) {
   chk_lst <- function(u) {
     # col_assay <- c('ksv' = "KSV", 'gain' = 'Gain')[u$assay]
     # ck <- u[[u$assay]][[col_assay]]
