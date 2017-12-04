@@ -21,8 +21,8 @@ process_summary <- function(lst) {
       assay = u$assay,
       pH.status = all(u$CAL$pH.Status == "Good"),
       o2.status = all(u$CAL$O2.Status == "Good"),
-      Positive_Gain = gain_greater_zero > 0,
-      Positive_KSV = ksv_greater_zero > 0,
+      Positive_Gain = median_gain > 0,
+      Positive_KSV = median_ksv > 0,
       injections = (100 * (inj / length(
         u$CAL$O2.Status
       ))) <= 5,
