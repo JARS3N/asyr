@@ -4,8 +4,8 @@ process_summary <- function(lst) {
     # ck <- u[[u$assay]][[col_assay]]
     barcoded <- c('ksv' = u$O2_COEF$Ksv,
                   'gain' = u$PH_COEF$gain)
-    median_gain = median(u[[u$assay]]$Gain)
-    median_ksv = median(u[[u$assay]]$KSV)
+    median_gain = if(is.null(u[[u$assay]]$Gain)){1}else{median(u[[u$assay]]$Gain,na.rm=T)}
+    median_ksv = if(is.null(u[[u$assay]]$KSV)){1}else{median(u[[u$assay]]$KSV,na.rm=T)}
     F0hat <- ((u$O2_COEF$Ksv * 152) + 1) * u$O2_COEF$target
     F0per00dif <- 100 * ((u[[u$assay]]$F0 - F0hat) / F0hat)
     inj <- if (u$assay == 'gain') {
