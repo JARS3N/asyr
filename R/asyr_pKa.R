@@ -6,7 +6,7 @@ asyr_grab96<-function(u){
   pH<-c(rep(3.8,12),rep(5,12),rep(5.8,12),rep(6.6,12),rep(7.0,12),rep(7.4,12),rep(8.15,12),rep(9.2,12))
   u %>%
     .$LVL %>%
-    filter(.,Tick %in% tickfilter.A(Tick)) %>%
+    filter(.,Tick %in% tickfilter_a(Tick)) %>%
     dplyr::select(.,counts=pHlvl,Tick,Well) %>%
     dplyr::mutate(.,pH=pH[as.numeric(factor(Well))]) %>%
     merge(.,data.frame(dye=c(rep('CL',6),rep('PR',6)),Well=unique(.['Well'])),by="Well") %>%
@@ -23,7 +23,7 @@ asyr_grabXFp<-function(u){
   u %>%
     .$LVL %>%
     dplyr::select(.,counts=pHlvl,Tick,Well)%>%
-    dplyr::filter(.,Tick %in% tickfilter.B(Tick)) %>%
+    dplyr::filter(.,Tick %in% tickfilter_b(Tick)) %>%
     dplyr::mutate(.,Tick=as.numeric(factor(Tick))) %>%
     dplyr::mutate(.,dye = c("CL","PR")[as.numeric(factor(Tick>3))],pH=pH[as.numeric(factor(Well))]) %>%
     dplyr::group_by(.,Well,pH,dye) %>%dplyr::summarise(.,counts=mean(counts)) %>%
@@ -37,7 +37,7 @@ asyr_grab24<-function(u){
   u %>%
     .$LVL %>%
     dplyr::select(.,counts=pHlvl,Tick,Well)%>%
-    dplyr::filter(.,Tick %in% tickfilter.B(Tick)) %>%
+    dplyr::filter(.,Tick %in% tickfilter_b(Tick)) %>%
     dplyr::mutate(.,Tick=as.numeric(factor(Tick))) %>%
     dplyr::mutate(.,dye = c("CL","PR")[as.numeric(factor(Tick>3))],pH=pH[as.numeric(factor(Well))]) %>%
     dplyr::group_by(.,Well,pH,dye) %>%
