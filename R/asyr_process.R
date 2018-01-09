@@ -15,6 +15,7 @@ process<-function(X){
   E$TickTable<-asyr::tick_table(X)
   E$CAL <- asyr::CalData(X)
   E$LVL <- asyr::get_lvls(X,E$TickTable)
+  if(is.na(E$assay)){return(E)}
   puke<-function(){TRUE}
   Flist<-list(
     'gain'=newGain,
