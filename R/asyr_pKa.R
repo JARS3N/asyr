@@ -52,6 +52,7 @@ asyr_mungelist<-list(asyr_grab96,asyr_grab24,asyr_grabXFp)
 
 
 asyr_createRmd<-function (pHFluor, MFBatch, Directory) {
+   require(dplyr)
   file.path(Directory,"data.feather") %>%
     file.exists(.) %>%
     if(.){DATA<<- "data.feather"}else{DATA<<- "data.csv"}
@@ -65,6 +66,7 @@ asyr_createRmd<-function (pHFluor, MFBatch, Directory) {
 
 
 asyr_pKa<-function(pHFluor,MFBatch,Platform,Directory){
+   require(dplyr)
   FileOut<-file.path(Directory,paste0(pHFluor,"pKa.Rmd"))
   list.files(path=Directory,pattern='asyr',full.names = TRUE)   %>%
     lapply(.,XML::xmlTreeParse,useInternalNodes=T)  %>%
