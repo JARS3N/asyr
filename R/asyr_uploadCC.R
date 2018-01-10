@@ -1,3 +1,4 @@
+
 UploadsCC<-function(u){
   require(RMySQL)
   platstring<-c(
@@ -6,19 +7,18 @@ UploadsCC<-function(u){
     "W" = "xfe96wetqc",
     "Q" = "xf24legacy"
   )
-  my_db <- adminKraken::con_mysql()
-   # u<-mutate(u,type=sapply(Lot,function(u){substr(u,1,1)}))
-  u$type<-sapply(u$Lot,function(j){substr(j,1,1)})
-  un.u<-unique(u$type)
-  if (length(un.u)==1){
-    dbWriteTable(my_db, name=unname(platstring[un.u]),value=select(u,-type),
-                 append=TRUE,overwrite = FALSE,row.names=FALSE)
-    dbDisconnect(my_db)
+
+  if(length(u)<1){
+    return(TRUE)
   }else{
-    dbWriteTable(my_db, name=unname(platstring[un.u[1]]),
-                 value=select(filter(u,type== un.u[1]),-type),
-                 append=TRUE,overwrite = FALSE,row.names=FALSE)
+    my_db <- adminKraken::con_mysql()
+    dbWriteTable(my_db, 
+                name=unname(platstring[substr(unique(u[[1]]$Lot),1,1)]),
+                value=u[[1]],
+                append=TRUE,
+                overwrite = FALSE,
+                row.names=FALSE)
     dbDisconnect(my_db)
-    UploadsCC(filter(u,type!= un.u[1]))
+    UploadsCC(u[-1])
   }
 }
