@@ -7,7 +7,8 @@ UploadsCC<-function(u){
     "Q" = "xf24legacy"
   )
   my_db <- adminKraken::con_mysql()
-  u<-mutate(u,type=sapply(Lot,function(u){substr(u,1,1)}))
+   # u<-mutate(u,type=sapply(Lot,function(u){substr(u,1,1)}))
+  u$type<-sapply(u$Lot,function(j){substr(j,1,1)})
   un.u<-unique(u$type)
   if (length(un.u)==1){
     dbWriteTable(my_db, name=unname(platstring[un.u]),value=select(u,-type),
