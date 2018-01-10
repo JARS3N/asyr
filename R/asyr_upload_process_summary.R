@@ -7,13 +7,13 @@ upload_process_summary<-function(u){
     "W" = "xfe96wetqc",
     "Q" = "xf24legacy"
   )
-  Lot<-unique(u$Lot)
-  types<-sapply(Lot,function(u){substr(u,1,1)})
+ 
+  types<-sapply(u$Lot,function(u){substr(u,1,1)})
   u$table <- platstring[types]
   u$user <- Sys.getenv('USERNAME')
   u$date <- Sys.time()
   dbWriteTable(my_db,
-               name='wetqcTransactions',
+               name='wetqctransactions',
                value=u,
                overwrite=F,
                append=T
