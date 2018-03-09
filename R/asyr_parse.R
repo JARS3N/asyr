@@ -14,7 +14,7 @@ parse<-function(X){
   E$LVL <- asyr::get_lvls(X,E$TickTable)
   E$cal_temp <- asyr::cal_temp(X)
   E$O2_COEF$F0<-asyr::f0(E$O2_COEF$Ksv,E$O2_COEF$target,E$cal_temp)
-  E$LVL$mmHgO2<-(1/E$O2_COEF$Ksv) * ((F0(E$O2_COEF$Ksv,E$O2_COEF$target)/E$LVL$O2_CorrectedEmission)-1)
+  E$LVL$mmHgO2<-(1/E$O2_COEF$Ksv) * ((E$O2_COEF$F0/E$LVL$O2_CorrectedEmission)-1)
   E$LVL$file<-E$file
   E
 }
