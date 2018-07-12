@@ -12,9 +12,23 @@ extract_wetQC <- function (E)
   if (E$assay == "gain") {
     E$gain[c("KSV", "F0", "Ambient")] <- NA
   }
-  E[[E$assay]][c("pH.LED", "pH.CalEmission", "pH.IntialReferenceDelta", 
-                 "pH.Status", "O2.LED", "O2.CalEmission", "O2.IntialReferenceDelta", 
-                 "O2.Status")] <- NULL
+#  E[[E$assay]][c("pH.LED", "pH.CalEmission", "pH.IntialReferenceDelta", 
+#                 "pH.Status", "O2.LED", "O2.CalEmission", "O2.IntialReferenceDelta", 
+#                 "O2.Status")] <- NULL
+rm_nms <- c(
+  "pH.LED",
+  "pH.CalEmission",
+  "pH.IntialReferenceDelta",
+  "pH.Status",
+  "O2.LED",
+  "O2.CalEmission",
+  "O2.IntialReferenceDelta",
+  "O2.Status"
+)
+
+removing <- lapply(rm_nms, function(u) {
+  E[[E$assay]][u] <<- NULL
+}) 
   OUT <- merge(E$CAL, E[[E$assay]], by = "Well")
   OUT[c("Lot", "sn", "Inst", "Target")] <- list(E$Lot, E$sn, 
                                                 E$Inst, E$PH_COEF$target)
