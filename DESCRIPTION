@@ -1,19 +1,18 @@
 Package: asyr
 Type: Package
 Title: asyr
-Version: 0.1.7
+Version: 0.1.8
 Date: 2017-0807
-Author: J.Arsenault
-Maintainer: Who to complain to <JARS3N@GMAIL.COM>
+Authors@R: person("Jon", "Arsenault", email = "Arsenault.Jon@gmail.com", role = c("aut", "cre"))
 Description: asyr tools
 URL: https://github.com/JARS3N/asyr
 Imports:
-	methods,
-	readr,
-	RMySQL,
-	digest,
-	parallel,
-	R6,
-	XML
+ methods,
+ readr,
+ RMySQL,
+ digest,
+ parallel,
+ R6,
+ XML
 License: none
 LazyData: TRUE
