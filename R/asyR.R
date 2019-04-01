@@ -9,6 +9,7 @@ asyR <- R6::R6Class(
     sn =  NULL,
     Inst =  NULL,
     calibration_temp = NULL,
+    atmospheric_pressure = NULL,
     tick_table = NULL,
     O2_coefs = NULL,
     pH_coefs = NULL,
@@ -33,6 +34,7 @@ asyR <- R6::R6Class(
       self$calibration_temp <- as.numeric(
         xpathSApply(self$xml, "//AssayDataSet//CalibrationStartTemperature", xmlValue)
       )
+      self$atmospheric_pressure <- as.numeric(XML::xpathApply(self$xml,"//EnvironmentDataModifiers//AtmosphericPressure",XML::xmlValue))
       self$get_template()
       self$make_tick_table()
       self$get_O2_coefs()
@@ -299,7 +301,7 @@ asyR <- R6::R6Class(
         return(NA)
       }
     },calc_o2_lvl=function(){
-      self$levels$O2<- outliers::partial_pressure_ox(cal_temp_start, ATMp) +
+      self$levels$O2<- outliers::partial_pressure_ox(self$calibration_temp, self$atmospheric_pressure) +
       self$O2_coefs$F0 * 
       (self$O2_coefs$target - self$levels$O2_CorrectedEmission) * 
       (self$levels$O2_CorrectedEmission)^-1 * 
