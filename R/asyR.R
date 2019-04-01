@@ -60,6 +60,7 @@ asyR <- R6::R6Class(
     },
     get_O2_coefs = function() {
       ksvs <- as.numeric(xpathSApply(self$xml, '//O2DataModifiers//Ksv', xmlValue))
+      F0 <- as.numeric(XML::xpathApply(self$xml,"//AssayDataSet//O2DataModifiers//FO",XML::xmlValue)[[1]])
       coefs <- list(
         "target" = as.numeric(
           xpathSApply(
@@ -69,7 +70,8 @@ asyR <- R6::R6Class(
           )
         ),
         "Ksv" = ksvs[1],
-        "CorrectedKsv" = ksvs[2]
+        "CorrectedKsv" = ksvs[2],
+        "F0" = F0
       )
       self$O2_coefs <- coefs
     },
@@ -296,7 +298,15 @@ asyR <- R6::R6Class(
       if(length(b>0)){return(b)}else{
         return(NA)
       }
-    },wetqc=function(){
+    },calc_o2_lvl=function(){
+      self$levels$O2<- outliers::partial_pressure_ox(cal_temp_start, ATMp) +
+      self$O2_coefs$F0 * 
+      (self$O2_coefs$target - self$levels$O2_CorrectedEmission) * 
+      (self$levels$O2_CorrectedEmission)^-1 * 
+      (self$O2_coefs$target)^-1  *
+      (self$O2_coefs$Ksv)^-1 
+    },
+    wetqc=function(){
       if(self$type=="C" & self$assay=="wetqc"){
         return(self$combo_assay())
       }else{
