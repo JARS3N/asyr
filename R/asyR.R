@@ -17,13 +17,23 @@ asyR <- R6::R6Class(
     levels = NULL,
     template =NULL,
     assay = NULL,
-
+    
     initialize = function(x) {
       library(XML)
-      self$xml <- XML::xmlTreeParse(
-        x,
-        useInternalNodes = T
-      )
+      test <- tryCatch({
+        unzip(x, list = T)
+        return(TRUE)
+      }, error = function(e) {
+        return(FALSE)
+      })
+      
+      if (test) {
+        name <- grep("ASSAYDATA", unzip(x, list = T)$Name, value = T)
+        self$xml <- XML::xmlTreeParse(unzip(x, name),useInternalNodes = T)
+        unlink(name)
+      } else{
+        self$xml <- XML::xmlTreeParse(x,useInternalNodes = T)
+      }
       self$file <- basename(xpathSApply(self$xml, "//FileName", xmlValue))
       self$version <- xpathSApply(self$xml, "//SWVersion", xmlValue)
       self$lot <- xpathSApply(self$xml, "//Cartridge//Lot", xmlValue)
@@ -43,8 +53,8 @@ asyR <- R6::R6Class(
       self$get_lvls()
       self$assay<-self$determine_assay(self$template,self$file,F,NULL)
     },
-
-
+    
+    
     make_tick_table = function() {
       start = as.numeric(xpathSApply(self$xml, "//AssayDataSet//RateSpans//StartTickIndex", xmlValue))
       end =  as.numeric(xpathSApply(self$xml, "//AssayDataSet//RateSpans//EndTickIndex", xmlValue))
@@ -102,7 +112,7 @@ asyR <- R6::R6Class(
         )
       )
       coefs$gain <- c((coefs$slope * coefs$target) + coefs$intercept)
-
+      
       self$pH_coefs <- coefs
     },
     get_cal_data = function() {
@@ -165,7 +175,7 @@ asyR <- R6::R6Class(
           a = timestamp
         )
       )
-
+      
       minTick_Tick <- min(self$tick_table)
       minOut_Tick <- min(Out$Tick)
       #print(type)
@@ -208,7 +218,7 @@ asyR <- R6::R6Class(
         self$levels[self$levels$Measure == 1, c("Well", "Tick", "Measure", "pH_CorrectedEmission")]
       tick <- pLVL$Tick
       filtered_lvls <- tick %in% (max(tick) - c(2, 1, 0))
-
+      
       pHdf <- merge(setNames(
         aggregate(pH_CorrectedEmission ~ Well, data = pLVL[filtered_lvls, ], mean),
         c("Well", "sorpH")
@@ -222,7 +232,7 @@ asyR <- R6::R6Class(
       O2df <-
         self$levels[self$levels$Measure == 1 | self$levels$Measure == 2 ,
                     c("Well", "O2_CorrectedEmission", "Tick", "Measure")]
-
+      
       O2df$Measure <- c("Ambient", "F0")[O2df$Measure]
       kcalc <- lapply(split(O2df, O2df$Measure),
                       function(u) {
@@ -232,11 +242,11 @@ asyR <- R6::R6Class(
                                          FUN = "mean")
                         setNames(out, c("Well", unique(u$Measure)))
                       })
-
+      
       ksv <- merge(kcalc$Ambient, kcalc$F0, by = 'Well')
       ksv$KSV <- ((ksv$F0 / ksv$Ambient) - 1) / 152
-
-
+      
+      
       combo <- merge(pHdf, ksv, by = 'Well')
       combo[c("Inst", "Lot", "sn")] <-
         list(self$Inst, paste0(self$type, self$lot), self$sn)
@@ -273,7 +283,7 @@ asyR <- R6::R6Class(
       } else{
         X$dye <- 'CL'
       }
-
+      
       setNames(aggregate(
         pH_CorrectedEmission ~ Well + pH + dye,
         data = X,
@@ -302,11 +312,11 @@ asyR <- R6::R6Class(
       }
     },calc_o2_lvl=function(){
       self$levels$O2<- asyr::partial_pressure_ox(self$calibration_temp, self$atmospheric_pressure) +
-      self$O2_coefs$F0 * 
-      (self$O2_coefs$target - self$levels$O2_CorrectedEmission) * 
-      (self$levels$O2_CorrectedEmission)^-1 * 
-      (self$O2_coefs$target)^-1  *
-      (self$O2_coefs$Ksv)^-1 
+        self$O2_coefs$F0 * 
+        (self$O2_coefs$target - self$levels$O2_CorrectedEmission) * 
+        (self$levels$O2_CorrectedEmission)^-1 * 
+        (self$O2_coefs$target)^-1  *
+        (self$O2_coefs$Ksv)^-1 
     },
     wetqc=function(){
       if(self$type=="C" & self$assay=="wetqc"){
@@ -328,11 +338,11 @@ asyR <- R6::R6Class(
       if(self$lot!="" & self$type!=""){
         return()
       }else{
-       LOT<- regmatches(self$file,gregexpr("[C|W|T|Q|B][0-9|E][0-9]{4}",self$file))[[1]]
+        LOT<- regmatches(self$file,gregexpr("[C|W|T|Q|B][0-9|E][0-9]{4}",self$file))[[1]]
         self$type<-substr(LOT,1,1)
         self$lot<-substr(LOT,2,6)
       }
     }
-
+    
   )
 )
