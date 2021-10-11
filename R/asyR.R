@@ -20,20 +20,21 @@ asyR <- R6::R6Class(
     
     initialize = function(x) {
       library(XML)
-      test <- tryCatch({
-        unzip(x, list = T)
-        return(TRUE)
-      }, error = function(e) {
-        return(FALSE)
-      })
+      #test <- tryCatch({
+      #  unzip(x, list = T)
+      #  return(TRUE)
+      #}, error = function(e) {
+      #  return(FALSE)
+      #})
       
-      if (test) {
-        name <- grep("ASSAYDATA", unzip(x, list = T)$Name, value = T)
-        self$xml <- XML::xmlTreeParse(unzip(x, name),useInternalNodes = T)
-        unlink(name)
-      } else{
-        self$xml <- XML::xmlTreeParse(x,useInternalNodes = T)
-      }
+     # if (test) {
+     #   name <- grep("ASSAYDATA", unzip(x, list = T)$Name, value = T)
+     #   self$xml <- XML::xmlTreeParse(unzip(x, name),useInternalNodes = T)
+     #   unlink(name)
+     # } else{
+     #   self$xml <- XML::xmlTreeParse(x,useInternalNodes = T)
+     # }
+      self$xml <- asyr::read_xml(x)
       self$file <- basename(xpathSApply(self$xml, "//FileName", xmlValue))
       self$version <- xpathSApply(self$xml, "//SWVersion", xmlValue)
       self$lot <- xpathSApply(self$xml, "//Cartridge//Lot", xmlValue)
