@@ -320,7 +320,7 @@ asyR <- R6::R6Class(
         (self$O2_coefs$Ksv)^-1 
     },
     wetqc=function(){
-      if(self$type=="C" & self$assay=="wetqc"){
+      if(self$type=="C" & grepl("wet qc xfp|wet qc|wetqc",self$assay)==T){
         return(self$combo_assay())
       }else{
         if(self$assay=="ksv"){
