@@ -12,7 +12,7 @@ upload_process_summary<-function(u){
   u$table <- platstring[types]
   u$user <- Sys.getenv('USERNAME')
   u$date <- Sys.time()
-  dbWriteTable(my_db,
+  RMySQL::dbWriteTable(my_db,
                name='wetqctransactions',
                value=u,
                overwrite=F,
