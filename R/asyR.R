@@ -38,7 +38,7 @@ asyR <- R6::R6Class(
       self$file <- basename(xpathSApply(self$xml, "//FileName", xmlValue))
       self$version <- xpathSApply(self$xml, "//SWVersion", xmlValue)
       self$lot <- xpathSApply(self$xml, "//Cartridge//Lot", xmlValue)
-      self$type <-xpathSApply(self$xml, "//Cartridge//Type", xmlValue)
+      self$type <-toupper(xpathSApply(self$xml, "//Cartridge//Type", xmlValue))
       self$check_lottype()
       self$sn <- xpathSApply(self$xml, "//Cartridge//Serial", xmlValue)
       self$Inst <- xpathSApply(self$xml, "//InstrumentSerialNumber", xmlValue)
