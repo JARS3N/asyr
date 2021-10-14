@@ -22,7 +22,7 @@ wetQC_meta_summary <- function(u) {
   df <-
     data.frame(
       use = NA,
-      Lot = u$lot,
+      Lot = paste0(u$type,u$lot),
       sn = u$sn,
       assay=u$assay,
       pH.status = all(u$calibration$pH.Status == "Good"),
