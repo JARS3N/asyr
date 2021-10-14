@@ -6,7 +6,7 @@ wet_qc_upload <- function(df) {
       W = "xfe96wetqc",
       Q = "xf24legacy")
   my_db <- adminKraken::con_mysql()
-  dbWriteTable(
+  RMySQL::dbWriteTable(
     my_db,
     name = unname(platstring[substr(unique(df$Lot),
                                     1, 1)]),
