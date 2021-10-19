@@ -4,7 +4,7 @@ read_xml <- function(file) {
     out <- XML::xmlTreeParse(unzip(file, name), useInternalNodes = T)
     unlink(name)
   } else{
-    out <- XML::xmlTreeParse(x, useInternalNodes = T)
+    out <- XML::xmlTreeParse(file, useInternalNodes = T)
   }
   return(out)
 }
