@@ -3,7 +3,7 @@ Type: Package
 Title: asyr
 Version: 0.1.8
 Date: 2017-0807
-Authors@R: person("Jon", "Arsenault", email = "Arsenault.Jon@gmail.com", role = c("aut", "cre"))
+Authors@R: person("Jon", "Arsenault", email = "Jars3n@gmail.com", role = c("aut", "cre"))
 Description: asyr tools
 URL: https://github.com/JARS3N/asyr
 Imports:
