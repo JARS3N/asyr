@@ -6,14 +6,20 @@ change_pH_coef <- function(file, PH_B = NULL, PH_C = NULL) {
       xmlValue(N) <- as.character(var)
     })
   }
-  paths <- Reduce(
-    'paste0',
-    list(
-      "//Item[Key='pH']//Value//AnalyteCalibration//GainEquation//",
-      c("C3", "C4"),
-      "/text()"
-    )
-  )
+  paths <- file.path(
+  "",
+  "",
+  "Item[Key='pH']",
+  "",
+  "Value",
+  "",
+  "AnalyteCalibration",
+  "",
+  "GainEquation",
+  "",
+  c("C3", "C4"),
+  "text()"
+)
   
   xml <- XML::xmlTreeParse(file, useInternalNodes = T)
   
