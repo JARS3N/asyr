@@ -199,21 +199,45 @@ asyR <- R6::R6Class(
         (LVL$Target / LVL$pH.CalEmission) * (1 / 800) * (LVL$pH.CalEmission - LVL$sorpH)
       LVL
     },
+   # calc_ksv = function() {
+    #  spl <- lapply(split(self$levels, self$levels$Measure), function(u) {
+     #   df <-
+      #    u[u$Tick %in% (max(u$Tick) - c(2, 1, 0)), c('Tick', 'O2_CorrectedEmission', 'Well', 'Measure')]
+       # agg <- aggregate(O2_CorrectedEmission ~ Well,
+       #                  data = df,
+       #                  FUN = "mean")
+      #  m <- c('Ambient', 'F0')[unique(df$Measure)]
+      #  names(agg) <- c('Well', m)
+      #  agg
+      #})
+      #comb <- Reduce('merge', spl)[c('Well', 'Ambient', 'F0')]
+      #comb$KSV <- ((comb$F0 / comb$Ambient) - 1) * 152^-1
+      #merge(comb, self$calibration, by = 'Well')
+    #},
     calc_ksv = function() {
-      spl <- lapply(split(self$levels, self$levels$Measure), function(u) {
-        df <-
-          u[u$Tick %in% (max(u$Tick) - c(2, 1, 0)), c('Tick', 'O2_CorrectedEmission', 'Well', 'Measure')]
-        agg <- aggregate(O2_CorrectedEmission ~ Well,
-                         data = df,
-                         FUN = "mean")
-        m <- c('Ambient', 'F0')[unique(df$Measure)]
-        names(agg) <- c('Well', m)
-        agg
-      })
-      comb <- Reduce('merge', spl)[c('Well', 'Ambient', 'F0')]
-      comb$KSV <- ((comb$F0 / comb$Ambient) - 1) * 152^-1
-      merge(comb, self$calibration, by = 'Well')
-    },
+  #determine max measurements
+  max_meas <- max(self$tick_table$Measure)
+  avg_t3 <- function(j) {
+    mx <- max(j$Tick)
+    t3 <- mx - c(2, 1, 0)
+    aggregate(O2_CorrectedEmission ~ Well,
+              data = j[j$Tick %in% t3, ],
+              FUN = "mean")
+  }
+  if (max_meas == 1) {
+    B <- self$calibration[, c("Well", "O2.CalEmission")]
+  } else{
+    B <- avg_t3(self$levels[self$levels$Measure == (max_meas - 1), ])
+  }
+  names(B) <- c("Well", "Ambient")
+  A <- setNames(avg_t3(self$levels[self$levels$Measure == max_meas, ]),
+                c("Well", "F0"))
+  comb <- Reduce('merge', spl)[c('Well', 'Ambient', 'F0')]
+  comb <- merge(A, B)
+  pp <- asyr::partial_pressure_ox(37)
+  comb$KSV <- ((comb$F0 / comb$Ambient) - 1) * pp ^ -1
+  merge(comb, self$calibration, by = 'Well')
+},
     combo_assay = function() {
       pLVL <-
         self$levels[self$levels$Measure == 1, c("Well", "Tick", "Measure", "pH_CorrectedEmission")]
