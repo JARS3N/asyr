@@ -232,7 +232,6 @@ asyR <- R6::R6Class(
   names(B) <- c("Well", "Ambient")
   A <- setNames(avg_t3(self$levels[self$levels$Measure == max_meas, ]),
                 c("Well", "F0"))
-  comb <- Reduce('merge', spl)[c('Well', 'Ambient', 'F0')]
   comb <- merge(A, B)
   pp <- asyr::partial_pressure_ox(37)
   comb$KSV <- ((comb$F0 / comb$Ambient) - 1) * pp ^ -1
