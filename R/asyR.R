@@ -290,7 +290,7 @@ asyR <- R6::R6Class(
   )[self$type])
   # extrapolate the pH data frame from plate type
   pH_df <- tibble(pH = unlist(lapply(pH, rep, times = reps)),
-                  Well = seq_along(pH_df$pH))
+                  Well = seq_along(pH))
   # is it a 96 type, the assay is only one measure with dye split across the plate
   is96 <- self$type %in% c("W","X")
   # check for max measurement as saftey to confirm which assay being run
