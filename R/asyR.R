@@ -277,42 +277,45 @@ asyR <- R6::R6Class(
       combo
     },
     munge_pka = function() {
-      pH <- c(3.8, 5, 5.8, 6.6, 7.0, 7.4, 8.15, 9.2)
-      reps <- unname(c(
-        "C" = 1,
-        "T" = 3,
-        "Q" = 3,
-        "B" = 3,
-        "W" = 12
-      )[self$type])
-      pH_df <- data.frame(pH = unlist(lapply(pH, rep, times = reps)))
-      pH_df$Well <- seq_along(pH_df$pH)
-      last_ticks_of_measures <-
-        unlist(lapply(unique(self$levels$Measure), function(u) {
-          max(self$levels$Tick[self$levels$Measure == u])
-        }))
-      tick_filter <-
-        unlist(rev(lapply(rev(last_ticks_of_measures)[1:2], function(n) {
-          c(-2, -1, 0) + n
-        })))
-      LVL <-
-        self$levels[self$levels$Tick %in% tick_filter, c("pH_CorrectedEmission", "Tick", "Well", "Measure")]
-      LVL$Tick <- as.numeric(factor(LVL$Tick))
-      X <- merge(LVL, pH_df, by = 'Well')
-      X$Measure <- as.numeric(factor(X$Measure))
-      if (max(X$Measure == 2) & self$type != "W") {
-        X$dye <- c('CL', 'PR')[X$Measure]
-      } else if (self$type == "W" & max(X$Measure) == 1) {
-        X$dye <- c(rep("CL", 6), rep("PR", 6))
-      } else{
-        X$dye <- 'CL'
-      }
-      
-      setNames(aggregate(
-        pH_CorrectedEmission ~ Well + pH + dye,
-        data = X,
-        FUN = mean
-      ),c("Well", "pH", "dye", "counts"))
+        require(dplyr)
+  pH <- c(3.8, 5, 5.8, 6.6, 7.0, 7.4, 8.15, 9.2)
+  reps <- unname(c(
+    "C" = 1,
+    "Z" = 1,
+    "Q" = 3,
+    "B" = 3,
+    "Y" = 3,
+    "W" = 12,
+    "X" = 12
+  )[self$type])
+  # extrapolate the pH data frame from plate type
+  pH_df <- tibble(pH = unlist(lapply(pH, rep, times = reps)),
+                  Well = seq_along(pH_df$pH))
+  # is it a 96 type, the assay is only one measure with dye split across the plate
+  is96 <- self$type %in% c("W","X")
+  # check for max measurement as saftey to confirm which assay being run
+  MM <- max(self$levels$Measure)
+  # create dye table to join based on previous info
+  if (MM == 2 & !is96) {
+    o <- tibble(dye = c('CL', 'PR'), Measure = c(1, 2))
+  } else if (is96 & MM == 1) {
+    o <- tibble(dye = rep(c(rep("CL", 6), rep("PR", 6)), 8),
+                Well = 1:96)
+  } else{
+    o <- tibble(dye = c('CL', 'CL'), Measure = c(1, 2))
+  }
+
+# Join them all together
+self$levels %>% 
+    select(.,Tick,Well,Measure,pH_CorrectedEmission) %>% 
+    group_by(Measure) %>% 
+    filter(Tick >= (max(Tick)-2)) %>% 
+    group_by(Well,Measure) %>% 
+    summarise(counts = mean(pH_CorrectedEmission)) %>% 
+    left_join(.,pH_df) %>% 
+    left_join(o) %>% 
+    select(-Measure)
+  
     },
     get_template = function() {
       usrtemplate<-xpathSApply(self$xml, path = "//IsUserTemplate", xmlValue)
