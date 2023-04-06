@@ -346,7 +346,7 @@ self$levels %>%
         (self$O2_coefs$Ksv)^-1 
     },
     wetqc=function(){
-      if(self$type=="C" & grepl("wet qc xfp|wet qc|wetqc",self$assay)==T){
+      if(self$type %in% c("C","Z") & grepl("wet qc xfp|wet qc|wetqc",self$assay)==T){
         return(self$combo_assay())
       }else{
         if(self$assay=="ksv"){
@@ -365,7 +365,7 @@ self$levels %>%
       if(self$lot!="" & self$type!=""){
         return()
       }else{
-        LOT<- regmatches(self$file,gregexpr("[C|W|T|Q|B][0-9|E][0-9]{4}",self$file))[[1]]
+        LOT<- unlist(regmatches(self$file,gregexpr("(C|W|T|Q|B|X|Y|Z)[(0-9,E)][0-9]{4}",sef$file)))
         self$type<-substr(LOT,1,1)
         self$lot<-substr(LOT,2,6)
       }
