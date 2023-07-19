@@ -14,5 +14,7 @@ Imports:
  parallel,
  R6,
  XML
+Remotes: 
+  Github::Jars3n/pp
 License: none
 LazyData: TRUE
